@@ -47,7 +47,7 @@ function estado() {
   return s;
 }
 function informar() { try { if (fuente) fuente.postMessage(estado(), '*'); } catch (e) {} }
-function identificar() { if (!OS) return Promise.resolve(); try { return Promise.resolve(jugador ? OS.login(jugador) : OS.logout()).catch(function () {}); } catch (e) { return Promise.resolve(); } }
+function identificar() { if (!OS) return Promise.resolve(); try { return Promise.resolve(jugador ? OS.login((esIOS ? 'i:' : 'a:') + jugador) : OS.logout()).catch(function () {}); } catch (e) { return Promise.resolve(); } }
 
 // Pide el permiso. Si el celular exige un toque directo en esta página, muestra la barra para darlo.
 function activar(directo) {
@@ -91,7 +91,7 @@ window.addEventListener('message', function (e) {
 if (ONESIGNAL_APP_ID) {
   window.OneSignalDeferred = window.OneSignalDeferred || [];
   OneSignalDeferred.push(function (OneSignal) {
-    return OneSignal.init({ appId: ONESIGNAL_APP_ID }).then(function () {
+    return OneSignal.init({ appId: ONESIGNAL_APP_ID, welcomeNotification: { disable: true } }).then(function () {
       OS = OneSignal;
       try { OS.Notifications.addEventListener('permissionChange', informar); OS.User.PushSubscription.addEventListener('change', informar); } catch (e) {}
       return identificar();
