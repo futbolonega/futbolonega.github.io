@@ -36,7 +36,7 @@ var esIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform
 var instalada = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
 
 function estado() {
-  var s = { onega: 'estado', config: !!ONESIGNAL_APP_ID, ios: esIOS, instalada: instalada, soportado: false, activo: false, bloqueado: false };
+  var s = { onega: 'estado', config: !!ONESIGNAL_APP_ID, ios: esIOS, instalada: instalada, soportado: false, activo: false, bloqueado: false, jugador: jugador };
   try {
     if (OS) {
       s.soportado = OS.Notifications.isPushSupported();
@@ -81,7 +81,8 @@ window.addEventListener('message', function (e) {
   fuente = e.source;
   if (e.data.onega === 'jugador') {
     var n = String(e.data.nombre || '').slice(0, 40);
-    if (n !== jugador) { jugador = n; try { localStorage.setItem('onega-jugador', n); } catch (err) {} identificar(); }
+    // Un nombre vacío solo se acepta cuando el organizador destraba el celular a propósito.
+    if ((n || e.data.borrar) && n !== jugador) { jugador = n; try { localStorage.setItem('onega-jugador', n); } catch (err) {} identificar(); }
   } else if (e.data.onega === 'push') {
     if (e.data.accion === 'activar') activar(false); else if (e.data.accion === 'desactivar') desactivar();
   }
